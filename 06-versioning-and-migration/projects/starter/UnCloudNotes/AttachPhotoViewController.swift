@@ -30,6 +30,7 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
+import CoreData
 import UIKit
 
 class AttachPhotoViewController: UIViewController {
@@ -63,11 +64,16 @@ extension AttachPhotoViewController: UIImagePickerControllerDelegate {
   func imagePickerController(_ picker: UIImagePickerController,
     didFinishPickingMediaWithInfo info:
     [UIImagePickerController.InfoKey: Any]) {
+    guard let note = note,
+      let context = note.managedObjectContext else {
+        return
+    }
 
-    guard let note = note else { return }
-
-    note.image =
+    let attachment = Attachment(context: context)
+    attachment.dateCreated = Date()
+    attachment.image =
       info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+    attachment.note = note
 
     _ = navigationController?.popViewController(animated: true)
   }
